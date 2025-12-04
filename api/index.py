@@ -2,21 +2,22 @@
 Vercel Serverless Function Entry Point
 Exposes the FastAPI app for Vercel deployment
 """
-import sys
 import os
+import sys
 
-# Add backend folder to Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
+# Add the current directory (api/) to Python path for imports
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
 
-# Load environment variables
-from dotenv import load_dotenv
-load_dotenv()
+# Set environment variable for RapidAPI
+os.environ.setdefault('RAPIDAPI_KEY', '922556e08bmsh465b2b5025c11a5p176967jsn3ca78cdb094c')
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
-# Import routes
+# Import routes (now local to api folder)
 from routes.api import router as api_router
 
 # Create FastAPI app
@@ -61,4 +62,4 @@ async def root():
 
 
 # Vercel handler
-handler = Mangum(app)
+handler = Mangum(app, lifespan="off")

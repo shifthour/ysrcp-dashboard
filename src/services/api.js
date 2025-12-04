@@ -3,8 +3,10 @@
  * Connects to the Python FastAPI backend
  */
 
-// Use relative URL in production (Vercel), localhost in development
-const API_BASE_URL = import.meta.env.PROD ? '/api' : 'http://127.0.0.1:8000/api';
+// Use environment variable for API URL in production, localhost in development
+// In production on Vercel, use relative URL (same-origin) for the API
+const API_BASE_URL = import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? '/api' : 'http://127.0.0.1:8000/api');
 
 // Helper function for API calls
 async function fetchAPI(endpoint, options = {}) {
