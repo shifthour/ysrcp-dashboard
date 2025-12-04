@@ -3,8 +3,8 @@
  * Connects to the Python FastAPI backend
  */
 
-// Use environment variable for API URL in production, localhost in development
-// In production on Vercel, use the Render backend URL
+// Use environment variable for API URL, or Render backend URL in production
+// Local development uses localhost:8000, production calls Render directly (CORS enabled)
 const API_BASE_URL = import.meta.env.VITE_API_URL ||
   (import.meta.env.PROD ? 'https://ysrcp-dashboard.onrender.com/api' : 'http://127.0.0.1:8000/api');
 
