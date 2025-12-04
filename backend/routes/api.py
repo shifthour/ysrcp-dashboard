@@ -1,20 +1,46 @@
 """
 API Routes for YSRCP Political Dashboard
+Uses lazy imports for faster startup
 """
 
 from fastapi import APIRouter, HTTPException
 from typing import Dict, Any, List
 from datetime import datetime
 
-from services.google_trends import google_trends_service
-from services.news_service import news_service
-from services.sentiment_service import sentiment_service
-from services.social_service import social_service
-from services.youtube_service import youtube_service
-from services.twitter_service import twitter_service
-from services.instagram_service import instagram_service
-from services.facebook_service import facebook_service
-from services.stats_aggregator import stats_aggregator
+# Lazy import helpers - services are loaded on first use, not at startup
+_services = {}
+
+def get_service(name):
+    """Lazy load services to speed up server startup"""
+    if name not in _services:
+        if name == 'google_trends':
+            from services.google_trends import google_trends_service
+            _services[name] = google_trends_service
+        elif name == 'news':
+            from services.news_service import news_service
+            _services[name] = news_service
+        elif name == 'sentiment':
+            from services.sentiment_service import sentiment_service
+            _services[name] = sentiment_service
+        elif name == 'social':
+            from services.social_service import social_service
+            _services[name] = social_service
+        elif name == 'youtube':
+            from services.youtube_service import youtube_service
+            _services[name] = youtube_service
+        elif name == 'twitter':
+            from services.twitter_service import twitter_service
+            _services[name] = twitter_service
+        elif name == 'instagram':
+            from services.instagram_service import instagram_service
+            _services[name] = instagram_service
+        elif name == 'facebook':
+            from services.facebook_service import facebook_service
+            _services[name] = facebook_service
+        elif name == 'stats':
+            from services.stats_aggregator import stats_aggregator
+            _services[name] = stats_aggregator
+    return _services[name]
 
 router = APIRouter(prefix="/api", tags=["Dashboard API"])
 

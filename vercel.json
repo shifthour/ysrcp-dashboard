@@ -25,8 +25,5 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ],
-  "env": {
-    "RAPIDAPI_KEY": "922556e08bmsh465b2b5025c11a5p176967jsn3ca78cdb094c"
-  }
+  ]
 }
