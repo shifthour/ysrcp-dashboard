@@ -72,16 +72,16 @@ async def refresh_all_data():
     """
     try:
         # Clear all service caches
-        twitter_service.clear_cache()
-        instagram_service.clear_cache()
-        facebook_service.clear_cache()
-        youtube_service.clear_cache()
+        get_service('twitter').clear_cache()
+        get_service('instagram').clear_cache()
+        get_service('facebook').clear_cache()
+        get_service('youtube').clear_cache()
 
         # Fetch fresh data from all sources
-        twitter_data = twitter_service.get_party_stats()
-        instagram_data = instagram_service.get_trending_posts()
-        facebook_data = facebook_service.get_trending_posts()
-        youtube_data = youtube_service.get_trending_videos()
+        twitter_data = get_service('twitter').get_party_stats()
+        instagram_data = get_service('instagram').get_trending_posts()
+        facebook_data = get_service('facebook').get_trending_posts()
+        youtube_data = get_service('youtube').get_trending_videos()
 
         return {
             "success": True,
@@ -123,13 +123,13 @@ async def get_dashboard_data():
     """
     try:
         # Get real stats from aggregator (uses cached, consistent values)
-        real_overall_stats = stats_aggregator.get_real_overall_stats()
-        sentiment_battle = stats_aggregator.get_real_sentiment_battle()
+        real_overall_stats = get_service('stats').get_real_overall_stats()
+        sentiment_battle = get_service('stats').get_real_sentiment_battle()
 
         # Fetch all data concurrently
-        overall_stats = await social_service.get_overall_stats()
-        platform_stats = await social_service.get_platform_stats()
-        trending_hashtags = await social_service.get_trending_hashtags()
+        overall_stats = await get_service('social').get_overall_stats()
+        platform_stats = await get_service('social').get_platform_stats()
+        trending_hashtags = await get_service('social').get_trending_hashtags()
 
         # Merge real stats with overall stats
         overall_stats['ysrcp']['sentimentScore'] = real_overall_stats['ysrcp']['sentimentScore']
@@ -140,10 +140,10 @@ async def get_dashboard_data():
         overall_stats['tdp']['avgEngagementRate'] = real_overall_stats['tdp']['avgEngagementRate']
 
         # Get full Google Trends data
-        google_trends_interest = google_trends_service.get_interest_over_time()
-        google_trends_regional = google_trends_service.get_regional_interest()
-        google_trends_queries = google_trends_service.get_related_queries()
-        google_trends_breakout = google_trends_service.get_breakout_topics()
+        google_trends_interest = get_service('google_trends').get_interest_over_time()
+        google_trends_regional = get_service('google_trends').get_regional_interest()
+        google_trends_queries = get_service('google_trends').get_related_queries()
+        google_trends_breakout = get_service('google_trends').get_breakout_topics()
 
         google_trends = {
             "interest": google_trends_interest,
@@ -153,26 +153,26 @@ async def get_dashboard_data():
         }
 
         # Get YouTube trending videos
-        youtube_data = youtube_service.get_trending_videos()
+        youtube_data = get_service('youtube').get_trending_videos()
 
         # Get Twitter trending tweets
-        twitter_data = twitter_service.get_trending_tweets()
+        twitter_data = get_service('twitter').get_trending_tweets()
 
         # Get Instagram trending posts
-        instagram_data = instagram_service.get_trending_posts()
+        instagram_data = get_service('instagram').get_trending_posts()
 
         # Get Facebook trending posts
-        facebook_data = facebook_service.get_trending_posts()
+        facebook_data = get_service('facebook').get_trending_posts()
 
         # Get influencer data
-        influencer_data = twitter_service.get_influencers()
+        influencer_data = get_service('twitter').get_influencers()
 
-        news_data = await news_service.get_all_news()
+        news_data = await get_service('news').get_all_news()
 
         # Get sentiment from news articles
         ysrcp_texts = [a['title'] + ' ' + a.get('description', '') for a in news_data['ysrcp']['articles']]
         tdp_texts = [a['title'] + ' ' + a.get('description', '') for a in news_data['tdp']['articles']]
-        sentiment_data = sentiment_service.get_sentiment_score(ysrcp_texts, tdp_texts)
+        sentiment_data = get_service('sentiment').get_sentiment_score(ysrcp_texts, tdp_texts)
 
         return {
             "overallStats": overall_stats,
@@ -208,7 +208,7 @@ async def get_dashboard_data():
 async def get_overall_stats():
     """Get overall statistics for both parties"""
     try:
-        return await social_service.get_overall_stats()
+        return await get_service('social').get_overall_stats()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -217,7 +217,7 @@ async def get_overall_stats():
 async def get_platform_stats():
     """Get platform-wise statistics"""
     try:
-        return await social_service.get_platform_stats()
+        return await get_service('social').get_platform_stats()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -226,10 +226,10 @@ async def get_platform_stats():
 async def get_google_trends():
     """Get Google Trends data"""
     try:
-        interest = google_trends_service.get_interest_over_time()
-        regional = google_trends_service.get_regional_interest()
-        related = google_trends_service.get_related_queries()
-        breakout = google_trends_service.get_breakout_topics()
+        interest = get_service('google_trends').get_interest_over_time()
+        regional = get_service('google_trends').get_regional_interest()
+        related = get_service('google_trends').get_related_queries()
+        breakout = get_service('google_trends').get_breakout_topics()
 
         return {
             "interest": interest,
@@ -245,7 +245,7 @@ async def get_google_trends():
 async def get_regional_trends():
     """Get regional search interest"""
     try:
-        return google_trends_service.get_regional_interest()
+        return get_service('google_trends').get_regional_interest()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -254,7 +254,7 @@ async def get_regional_trends():
 async def get_related_queries():
     """Get related search queries"""
     try:
-        return google_trends_service.get_related_queries()
+        return get_service('google_trends').get_related_queries()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -263,7 +263,7 @@ async def get_related_queries():
 async def get_trending_hashtags():
     """Get trending hashtags"""
     try:
-        return await social_service.get_trending_hashtags()
+        return await get_service('social').get_trending_hashtags()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -272,7 +272,7 @@ async def get_trending_hashtags():
 async def get_news():
     """Get news articles for both parties"""
     try:
-        return await news_service.get_all_news()
+        return await get_service('news').get_all_news()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -281,7 +281,7 @@ async def get_news():
 async def get_news_stats():
     """Get news statistics"""
     try:
-        return await news_service.get_news_stats()
+        return await get_service('news').get_news_stats()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -291,12 +291,12 @@ async def get_sentiment():
     """Get sentiment analysis"""
     try:
         # Get news data for sentiment analysis
-        news_data = await news_service.get_all_news()
+        news_data = await get_service('news').get_all_news()
 
         ysrcp_texts = [a['title'] + ' ' + a.get('description', '') for a in news_data['ysrcp']['articles']]
         tdp_texts = [a['title'] + ' ' + a.get('description', '') for a in news_data['tdp']['articles']]
 
-        return sentiment_service.get_sentiment_score(ysrcp_texts, tdp_texts)
+        return get_service('sentiment').get_sentiment_score(ysrcp_texts, tdp_texts)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -309,8 +309,8 @@ async def analyze_text(data: Dict[str, Any]):
         if not text:
             raise HTTPException(status_code=400, detail="Text is required")
 
-        result = sentiment_service.analyze_text(text)
-        party_context = sentiment_service.classify_party_sentiment(text)
+        result = get_service('sentiment').analyze_text(text)
+        party_context = get_service('sentiment').classify_party_sentiment(text)
 
         return {
             "analysis": result,
@@ -353,7 +353,7 @@ async def get_youtube_trending(party: str = "all"):
     party: 'ysrcp', 'tdp', or 'all' (default)
     """
     try:
-        return youtube_service.get_trending_videos(party)
+        return get_service('youtube').get_trending_videos(party)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -362,7 +362,7 @@ async def get_youtube_trending(party: str = "all"):
 async def get_ysrcp_videos():
     """Get trending videos for YSRCP"""
     try:
-        result = youtube_service.get_trending_videos('ysrcp')
+        result = get_service('youtube').get_trending_videos('ysrcp')
         return result.get('ysrcp', {'videos': [], 'totalViews': 0})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -372,7 +372,7 @@ async def get_ysrcp_videos():
 async def get_tdp_videos():
     """Get trending videos for TDP"""
     try:
-        result = youtube_service.get_trending_videos('tdp')
+        result = get_service('youtube').get_trending_videos('tdp')
         return result.get('tdp', {'videos': [], 'totalViews': 0})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -387,7 +387,7 @@ async def get_twitter_trending(party: str = "all"):
     party: 'ysrcp', 'tdp', or 'all' (default)
     """
     try:
-        return twitter_service.get_trending_tweets(party)
+        return get_service('twitter').get_trending_tweets(party)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -396,7 +396,7 @@ async def get_twitter_trending(party: str = "all"):
 async def search_twitter(query: str, count: int = 20):
     """Search tweets by query"""
     try:
-        tweets = twitter_service.search_tweets(query, count)
+        tweets = get_service('twitter').search_tweets(query, count)
         return {"tweets": tweets, "count": len(tweets)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -406,7 +406,7 @@ async def search_twitter(query: str, count: int = 20):
 async def get_twitter_topics():
     """Get trending hashtags from political tweets"""
     try:
-        return twitter_service.get_trending_topics()
+        return get_service('twitter').get_trending_topics()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -415,7 +415,7 @@ async def get_twitter_topics():
 async def get_twitter_stats():
     """Get real-time Twitter stats for both parties (follower counts, etc.)"""
     try:
-        return twitter_service.get_party_stats()
+        return get_service('twitter').get_party_stats()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -424,7 +424,7 @@ async def get_twitter_stats():
 async def get_twitter_user(username: str):
     """Get Twitter user profile data"""
     try:
-        profile = twitter_service.get_user_profile(username)
+        profile = get_service('twitter').get_user_profile(username)
         if not profile:
             raise HTTPException(status_code=404, detail="User not found")
         return profile
@@ -443,7 +443,7 @@ async def get_instagram_trending(party: str = "all"):
     party: 'ysrcp', 'tdp', or 'all' (default)
     """
     try:
-        return instagram_service.get_trending_posts(party)
+        return get_service('instagram').get_trending_posts(party)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -452,7 +452,7 @@ async def get_instagram_trending(party: str = "all"):
 async def get_instagram_stats():
     """Get Instagram stats for both parties"""
     try:
-        return instagram_service.get_party_stats()
+        return get_service('instagram').get_party_stats()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -461,7 +461,7 @@ async def get_instagram_stats():
 async def get_instagram_user_posts(username: str):
     """Get Instagram posts for a specific user"""
     try:
-        posts = instagram_service.get_user_posts(username)
+        posts = get_service('instagram').get_user_posts(username)
         return {"posts": posts, "count": len(posts)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -476,7 +476,7 @@ async def get_facebook_trending(party: str = "all"):
     party: 'ysrcp', 'tdp', or 'all' (default)
     """
     try:
-        return facebook_service.get_trending_posts(party)
+        return get_service('facebook').get_trending_posts(party)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -485,7 +485,7 @@ async def get_facebook_trending(party: str = "all"):
 async def get_facebook_stats():
     """Get Facebook stats for both parties"""
     try:
-        return facebook_service.get_party_stats()
+        return get_service('facebook').get_party_stats()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -494,7 +494,7 @@ async def get_facebook_stats():
 async def get_facebook_page_posts(profile_id: str):
     """Get Facebook posts for a specific page"""
     try:
-        posts = facebook_service.search_posts(profile_id)
+        posts = get_service('facebook').search_posts(profile_id)
         return {"posts": posts, "count": len(posts)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -509,6 +509,6 @@ async def get_influencers():
     Returns users who actively tweet about YSRCP/TDP with their engagement stats
     """
     try:
-        return twitter_service.get_influencers()
+        return get_service('twitter').get_influencers()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
