@@ -298,11 +298,11 @@ class FacebookService:
                 ysrcp_posts = self.get_page_posts(FACEBOOK_PAGE_URLS['ysrcp'], 'ysrcp')
 
                 if ysrcp_posts:
-                    # Sort by engagement and take top 10
+                    # Sort by engagement and take top 20
                     ysrcp_posts.sort(key=lambda x: x['reactions'] + x['comments'] + x['shares'], reverse=True)
-                    result['ysrcp']['posts'] = ysrcp_posts[:10]
+                    result['ysrcp']['posts'] = ysrcp_posts[:20]
                     result['ysrcp']['totalEngagement'] = sum(
-                        p['reactions'] + p['comments'] + p['shares'] for p in ysrcp_posts[:10]
+                        p['reactions'] + p['comments'] + p['shares'] for p in ysrcp_posts[:20]
                     )
                     result['isLive'] = True
                     print(f"[Facebook] YSRCP: {len(ysrcp_posts)} posts, engagement: {result['ysrcp']['totalEngagement']}")
@@ -312,11 +312,11 @@ class FacebookService:
                 tdp_posts = self.get_page_posts(FACEBOOK_PAGE_URLS['tdp'], 'tdp')
 
                 if tdp_posts:
-                    # Sort by engagement and take top 10
+                    # Sort by engagement and take top 20
                     tdp_posts.sort(key=lambda x: x['reactions'] + x['comments'] + x['shares'], reverse=True)
-                    result['tdp']['posts'] = tdp_posts[:10]
+                    result['tdp']['posts'] = tdp_posts[:20]
                     result['tdp']['totalEngagement'] = sum(
-                        p['reactions'] + p['comments'] + p['shares'] for p in tdp_posts[:10]
+                        p['reactions'] + p['comments'] + p['shares'] for p in tdp_posts[:20]
                     )
                     result['isLive'] = True
                     print(f"[Facebook] TDP: {len(tdp_posts)} posts, engagement: {result['tdp']['totalEngagement']}")
@@ -324,7 +324,7 @@ class FacebookService:
             # Combine and sort by engagement
             all_posts = result['ysrcp']['posts'] + result['tdp']['posts']
             all_posts.sort(key=lambda x: x['reactions'] + x['comments'] + x['shares'], reverse=True)
-            result['combined'] = all_posts[:15]
+            result['combined'] = all_posts[:40]
 
         except Exception as e:
             print(f"Error fetching Facebook trending posts: {e}")

@@ -229,8 +229,8 @@ class TwitterService:
         try:
             # Fetch YSRCP tweets
             if party in ['all', 'ysrcp']:
-                ysrcp_tweets = self.search_tweets('YSRCP', count=15)
-                result['ysrcp']['tweets'] = ysrcp_tweets
+                ysrcp_tweets = self.search_tweets('YSRCP', count=25)
+                result['ysrcp']['tweets'] = ysrcp_tweets[:20]
                 result['ysrcp']['totalEngagement'] = sum(
                     t['engagement']['likes'] + t['engagement']['retweets']
                     for t in ysrcp_tweets
@@ -238,8 +238,8 @@ class TwitterService:
 
             # Fetch TDP tweets
             if party in ['all', 'tdp']:
-                tdp_tweets = self.search_tweets('TDP Chandrababu', count=15)
-                result['tdp']['tweets'] = tdp_tweets
+                tdp_tweets = self.search_tweets('TDP Chandrababu', count=25)
+                result['tdp']['tweets'] = tdp_tweets[:20]
                 result['tdp']['totalEngagement'] = sum(
                     t['engagement']['likes'] + t['engagement']['retweets']
                     for t in tdp_tweets
@@ -248,7 +248,7 @@ class TwitterService:
             # Combine and sort by engagement
             all_tweets = result['ysrcp']['tweets'] + result['tdp']['tweets']
             all_tweets.sort(key=lambda x: x['engagement']['likes'] + x['engagement']['retweets'], reverse=True)
-            result['combined'] = all_tweets[:20]
+            result['combined'] = all_tweets[:40]
 
         except Exception as e:
             print(f"Error fetching trending tweets: {e}")

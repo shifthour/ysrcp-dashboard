@@ -252,7 +252,7 @@ class InstagramService:
             # Combine and sort by engagement
             all_posts = result['ysrcp']['posts'] + result['tdp']['posts']
             all_posts.sort(key=lambda x: x['likes'] + x['comments'], reverse=True)
-            result['combined'] = all_posts[:15]
+            result['combined'] = all_posts[:40]
 
         except Exception as e:
             print(f"Error fetching Instagram trending posts: {e}")

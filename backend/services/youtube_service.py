@@ -149,20 +149,20 @@ class YouTubeService:
             if party in ['all', 'ysrcp']:
                 ysrcp_videos = []
                 # First search for official channel content
-                ysrcp_videos.extend(self._search_videos(YOUTUBE_CHANNELS['ysrcp'], 5))
+                ysrcp_videos.extend(self._search_videos(YOUTUBE_CHANNELS['ysrcp'], 15))
                 # Then add keyword searches
                 for keyword in YSRCP_KEYWORDS[:2]:
-                    ysrcp_videos.extend(self._search_videos(keyword, 3))
+                    ysrcp_videos.extend(self._search_videos(keyword, 8))
                 result['ysrcp'] = self._process_videos(ysrcp_videos, 'ysrcp')
 
             # Search for TDP videos - prioritize official channel
             if party in ['all', 'tdp']:
                 tdp_videos = []
                 # First search for official channel content
-                tdp_videos.extend(self._search_videos(YOUTUBE_CHANNELS['tdp'], 5))
+                tdp_videos.extend(self._search_videos(YOUTUBE_CHANNELS['tdp'], 15))
                 # Then add keyword searches
                 for keyword in TDP_KEYWORDS[:2]:
-                    tdp_videos.extend(self._search_videos(keyword, 3))
+                    tdp_videos.extend(self._search_videos(keyword, 8))
                 result['tdp'] = self._process_videos(tdp_videos, 'tdp')
 
             # Search for general AP politics
@@ -207,7 +207,7 @@ class YouTubeService:
         processed = []
         total_views = 0
 
-        for video in unique_videos[:10]:
+        for video in unique_videos[:20]:
             vid_id = video.get('videoId', '')
             title = video.get('title', '')
 
