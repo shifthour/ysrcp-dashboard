@@ -197,6 +197,44 @@ async def get_dashboard_data():
                 },
                 "trending": news_data['trending']
             },
+            "alerts": [
+                {
+                    "id": 1,
+                    "type": "warning",
+                    "title": "Negative Trend Detected",
+                    "message": "Spike in negative mentions detected in social media",
+                    "time": "15 mins ago",
+                    "platform": "twitter",
+                    "priority": "high"
+                },
+                {
+                    "id": 2,
+                    "type": "info",
+                    "title": "Competitor Activity",
+                    "message": "TDP launched new campaign hashtag",
+                    "time": "1 hour ago",
+                    "platform": "all",
+                    "priority": "medium"
+                },
+                {
+                    "id": 3,
+                    "type": "success",
+                    "title": "Engagement Milestone",
+                    "message": "YSRCP Twitter reached 1M impressions today",
+                    "time": "2 hours ago",
+                    "platform": "twitter",
+                    "priority": "low"
+                },
+                {
+                    "id": 4,
+                    "type": "info",
+                    "title": "Trending Topic",
+                    "message": "#JaganannaConnects trending in Andhra Pradesh",
+                    "time": "3 hours ago",
+                    "platform": "twitter",
+                    "priority": "medium"
+                }
+            ],
             "lastUpdated": datetime.now().isoformat()
         }
 
