@@ -4,9 +4,9 @@
  */
 
 // Use environment variable for API URL in production, localhost in development
-// In production on Vercel, use relative URL (same-origin) for the API
+// In production on Vercel, use the Render backend URL
 const API_BASE_URL = import.meta.env.VITE_API_URL ||
-  (import.meta.env.PROD ? '/api' : 'http://127.0.0.1:8000/api');
+  (import.meta.env.PROD ? 'https://ysrcp-dashboard.onrender.com/api' : 'http://127.0.0.1:8000/api');
 
 // Helper function for API calls
 async function fetchAPI(endpoint, options = {}) {
