@@ -8,11 +8,14 @@ Run with: uvicorn main:app --reload --port 8000
 from dotenv import load_dotenv
 load_dotenv()  # Load environment variables from .env file
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 import uvicorn
 import os
+from pathlib import Path
 
 # Import Mangum for Vercel serverless deployment
 try:
@@ -22,6 +25,10 @@ except ImportError:
     SERVERLESS = False
 
 from routes.api import router as api_router
+
+# Check if we have a frontend build to serve
+STATIC_DIR = Path(__file__).parent.parent / "dist"
+SERVE_FRONTEND = STATIC_DIR.exists() and (STATIC_DIR / "index.html").exists()
 
 
 @asynccontextmanager
@@ -111,6 +118,23 @@ async def root():
             "health": "/api/health"
         }
     }
+
+
+# Serve frontend static files in production (after API routes)
+if SERVE_FRONTEND:
+    # Mount static assets (JS, CSS, images)
+    app.mount("/assets", StaticFiles(directory=str(STATIC_DIR / "assets")), name="assets")
+
+    # Catch-all route for SPA - serve index.html for all non-API routes
+    @app.get("/{full_path:path}")
+    async def serve_spa(request: Request, full_path: str):
+        """Serve the React SPA for all non-API routes"""
+        # Check if it's a static file that exists
+        file_path = STATIC_DIR / full_path
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(str(file_path))
+        # Otherwise serve index.html for client-side routing
+        return FileResponse(str(STATIC_DIR / "index.html"))
 
 
 if __name__ == "__main__":
